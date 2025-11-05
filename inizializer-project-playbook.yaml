@@ -205,7 +205,7 @@
 
     - name: 3.3 Crear Webhook en Gitea (API)
       ansible.builtin.uri:
-        url: "https://simple-gitea-ocs-gitea.apps-crc.testing/api/v1/repos/{{ gitea_username }}/Prueba/hooks"
+        url: "https://simple-gitea-ocs-gitea.apps-crc.testing/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
         method: POST
         headers:
           Authorization: "token {{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
