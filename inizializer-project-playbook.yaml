@@ -251,6 +251,8 @@
       loop:
         - git init
         - git add .
+        - git config --global user.email "{{git_user}}@example.com"
+        - git config --global user.name "{{git_user}}"
         - git commit -m 'Initial commit from template {{ repo_base }}'
       when: tipo_repositorio == 'gitea' and repo_final_url is defined
 
