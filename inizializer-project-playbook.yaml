@@ -14,7 +14,7 @@
     # Parámetros de Repositorio
     # git_user: "mi_usuario"
     # grupo: "mi_org"
-    # repo_base: "template-ansible-playbooks"
+    repo_base: "template-ansible-playbooks"
     # repo_nuevo: "ansible-playbook-example"
     # tipo_repositorio: "gitlab" #|"github" | "gitlab" | "gitea"
     # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
@@ -36,7 +36,7 @@
     local_path: "/tmp/{{ repo_nuevo }}_clone"
     
     # Definiremos esta variable para que todas las tareas usen el nuevo token.
-    newly_created_pat: ""
+    # newly_created_pat: ""
     validate_certs: false
 
     # teams_webhook_url: "https://tuhost.webhook.office.com/webhookb2/..."
