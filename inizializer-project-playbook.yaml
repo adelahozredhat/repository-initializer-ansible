@@ -25,7 +25,7 @@
     webhook_events: ["push", "pull_request"]
 
     # Parámetros de Comunicación
-    # email_destinatario: "equipo@miempresa.com"
+    # smtp_to: "equipo@miempresa.com"
     # slack_channel: "#notificaciones-repos"
     # slack_api_token: "xoxb-..." 
     # smtp_host: "smtp.miempresa.com"
@@ -281,10 +281,10 @@
     - name: 4.1 ENVIAR NOTIFICACIÓN POR EMAIL (ansible.builtin.mail)
       ansible.builtin.mail:
         host: "{{ smtp_host }}"
-        port: 587
+        port: "{{ smtp_port|int }}"
         username: "{{ smtp_user }}"
         password: "{{ smtp_password }}"
-        to: "{{ email_destinatario }}"
+        to: "{{ smtp_to }}"
         subject: "✅ Repositorio Creado [{{ tipo_repositorio | upper }}]: {{ repo_nuevo }}"
         body: |
           Hola,
