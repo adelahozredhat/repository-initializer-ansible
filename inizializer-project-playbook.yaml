@@ -205,7 +205,7 @@
 
     - name: 3.3 Crear Webhook en Gitea (API)
       ansible.builtin.uri:
-        url: "https://simple-gitea-ocs-gitea.apps-crc.testing/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
+        url: "https://{{ git_host }}/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
         method: POST
         headers:
           Authorization: "token {{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
@@ -275,6 +275,8 @@
     # =========================================================================
     # 4. Tareas de Comunicación
     # =========================================================================
+    - debug:
+        msg: "{{repo_final_url}} - {{smtp_host}} - {{canales_comunicacion}}"
 
     - name: 4.1 ENVIAR NOTIFICACIÓN POR EMAIL (ansible.builtin.mail)
       ansible.builtin.mail:
