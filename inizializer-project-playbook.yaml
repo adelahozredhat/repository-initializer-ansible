@@ -37,6 +37,7 @@
     
     # Definiremos esta variable para que todas las tareas usen el nuevo token.
     newly_created_pat: ""
+    validate_certs: false
 
     # teams_webhook_url: "https://tuhost.webhook.office.com/webhookb2/..."
     # notification_title: "✅ Playbook Finalizado Exitosamente"
@@ -61,6 +62,7 @@
           scopes: ["repo", "workflow"] # Alcance amplio para crear y modificar repos
           note: "PAT for {{ repo_nuevo }}"
         status_code: [201]
+        validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'github'
       register: pat_creation_result_github
       
@@ -100,6 +102,7 @@
           name: "PAT for {{ repo_nuevo }}"
           scopes: ["write:repository", "read:repository", "write:issue", "read:issue"] # Alcance amplio
         status_code: [201]
+        validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'gitea'
       register: pat_creation_result_gitea
 
@@ -190,6 +193,7 @@
           owner: "{{ grupo }}"
           private: false
         status_code: [201]
+        validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'gitea' and newly_created_pat is defined
       register: gitea_create_result
 
@@ -213,6 +217,7 @@
             insecure_ssl: "0"
           events: "{{ webhook_events }}"
           active: true
+        validate_certs: "{{validate_certs}}"
         status_code: [201]
       when: tipo_repositorio == 'gitea' and gitea_create_result is succeeded
 
@@ -309,5 +314,6 @@
         body:
           title: "{{ notification_title }}"
           text: "{{ notification_text }}"
+        validate_certs: "{{validate_certs}}"
       delegate_to: localhost
       when: repo_final_url is defined and repo_final_url != "" and teams_webhook_url is defined and "teams" in canales_comunicacion
