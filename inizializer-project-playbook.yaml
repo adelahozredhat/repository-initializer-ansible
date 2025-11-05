@@ -12,7 +12,7 @@
     # git_token: "..." 
     
     # Parámetros de Repositorio
-    # usuario: "mi_usuario"
+    # git_user: "mi_usuario"
     # grupo: "mi_org"
     # repo_base: "template-ansible-playbooks"
     # repo_nuevo: "ansible-playbook-example"
@@ -75,7 +75,7 @@
       community.general.gitlab_group_access_token:
         api_url: "https://{{ git_host }}"
         api_token: "{{ git_token }}"
-        user_id: "{{ usuario }}" # Asumiendo que 'usuario' es el propietario de la API token
+        user_id: "{{ git_user }}" # Asumiendo que 'usuario' es el propietario de la API token
         name: "PAT for {{ repo_nuevo }}"
         scopes: ["api", "read_repository", "write_repository"] # Alcance amplio para crear y modificar repos
         state: present
@@ -91,7 +91,7 @@
     # --- 0.3 Gitea PAT Creation (using URI)
     - name: 0.3 Crear PAT de Usuario en Gitea
       ansible.builtin.uri:
-        url: "https://{{ git_host }}/api/v1/users/{{ usuario }}/tokens"
+        url: "https://{{ git_host }}/api/v1/users/{{ git_user }}/tokens"
         method: POST
         headers:
           Authorization: "token {{ git_token }}" # Usar el token del admin para crear el token para 'usuario'
