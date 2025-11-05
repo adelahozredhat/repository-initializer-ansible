@@ -9,7 +9,7 @@
   vars:
     # --- Variables de Entrada ---
     # El token que tiene permisos de administrador para crear OTROS tokens y repos.
-    # admin_token_repositorio: "..." 
+    # git_token: "..." 
     
     # Parámetros de Repositorio
     # usuario: "mi_usuario"
@@ -17,7 +17,7 @@
     # repo_base: "template-ansible-playbooks"
     # repo_nuevo: "ansible-playbook-example"
     # tipo_repositorio: "gitlab" #|"github" | "gitlab" | "gitea"
-    # host_repositorio: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
+    # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
     
     # Parámetros de Webhook
     # webhook_url: "https://awx-demo-awx.apps-crc.testing/api/v2/job_templates/7/launch/"
@@ -52,10 +52,10 @@
     # --- 0.1 GitHub PAT Creation (using URI to simulate PAT creation for auth user)
     - name: 0.1 Crear PAT de Usuario en GitHub
       ansible.builtin.uri:
-        url: "https://{{ host_repositorio }}/user/tokens"
+        url: "https://{{ git_host }}/user/tokens"
         method: POST
         headers:
-          Authorization: "token {{ admin_token_repositorio }}"
+          Authorization: "token {{ git_token }}"
         body_format: json
         body:
           scopes: ["repo", "workflow"] # Alcance amplio para crear y modificar repos
@@ -73,8 +73,8 @@
     # --- 0.2 GitLab PAT Creation (using dedicated module)
     - name: 0.2 Crear PAT de Usuario en GitLab
       community.general.gitlab_group_access_token:
-        api_url: "https://{{ host_repositorio }}"
-        api_token: "{{ admin_token_repositorio }}"
+        api_url: "https://{{ git_host }}"
+        api_token: "{{ git_token }}"
         user_id: "{{ usuario }}" # Asumiendo que 'usuario' es el propietario de la API token
         name: "PAT for {{ repo_nuevo }}"
         scopes: ["api", "read_repository", "write_repository"] # Alcance amplio para crear y modificar repos
@@ -91,10 +91,10 @@
     # --- 0.3 Gitea PAT Creation (using URI)
     - name: 0.3 Crear PAT de Usuario en Gitea
       ansible.builtin.uri:
-        url: "https://{{ host_repositorio }}/api/v1/users/{{ usuario }}/tokens"
+        url: "https://{{ git_host }}/api/v1/users/{{ usuario }}/tokens"
         method: POST
         headers:
-          Authorization: "token {{ admin_token_repositorio }}" # Usar el token del admin para crear el token para 'usuario'
+          Authorization: "token {{ git_token }}" # Usar el token del admin para crear el token para 'usuario'
         body_format: json
         body:
           name: "PAT for {{ repo_nuevo }}"
@@ -115,7 +115,7 @@
 
     - name: 1.1 Crear repositorio en GitHub desde plantilla
       community.general.github_repo:
-        api_url: "https://{{ host_repositorio }}"
+        api_url: "https://{{ git_host }}"
         api_token: "{{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
         name: "{{ repo_nuevo }}"
         organization: "{{ grupo }}"
@@ -150,7 +150,7 @@
     
     - name: 2.1 Crear repositorio en GitLab desde plantilla
       community.general.gitlab_project:
-        api_url: "https://{{ host_repositorio }}"
+        api_url: "https://{{ git_host }}"
         api_token: "{{ newly_created_pat }}"
         name: "{{ repo_nuevo }}"
         path_with_namespace: "{{ grupo }}/{{ repo_nuevo }}"
@@ -180,7 +180,7 @@
     
     - name: 3.1 Crear el nuevo repositorio vacío en Gitea (API)
       ansible.builtin.uri:
-        url: "https://{{ host_repositorio }}/api/v1/user/repos"
+        url: "https://{{ git_host }}/api/v1/user/repos"
         method: POST
         headers:
           Authorization: "token {{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
@@ -200,7 +200,7 @@
 
     - name: 3.3 Crear Webhook en Gitea (API)
       ansible.builtin.uri:
-        url: "https://{{ host_repositorio }}/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
+        url: "https://{{ git_host }}/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
         method: POST
         headers:
           Authorization: "token {{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
@@ -222,7 +222,7 @@
     - name: 3.4 Clonar el repositorio base localmente
       ansible.builtin.git:
         # La URL de clonación debe usar el nuevo PAT
-        repo: "https://{{ newly_created_pat }}@{{ host_repositorio }}/{{ grupo }}/{{ repo_base }}.git"
+        repo: "https://{{ newly_created_pat }}@{{ git_host }}/{{ grupo }}/{{ repo_base }}.git"
         dest: "{{ local_path }}"
         version: master
         clone: yes
@@ -253,7 +253,7 @@
         chdir: "{{ local_path }}"
       loop:
         # La URL de push debe usar el nuevo PAT
-        - git remote add origin https://{{ newly_created_pat }}@{{ host_repositorio }}/{{ grupo }}/{{ repo_nuevo }}.git
+        - git remote add origin https://{{ newly_created_pat }}@{{ git_host }}/{{ grupo }}/{{ repo_nuevo }}.git
         - git push -u origin master
       when: tipo_repositorio == 'gitea' and repo_final_url is defined
 
