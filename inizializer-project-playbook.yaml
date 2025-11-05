@@ -72,7 +72,7 @@
 
     # --- 0.2 GitLab PAT Creation (using dedicated module)
     - name: 0.2 Crear PAT de Usuario en GitLab
-      community.gitlab.gitlab_user_access_token:
+      community.general.gitlab_group_access_token:
         api_url: "https://{{ host_repositorio }}"
         api_token: "{{ admin_token_repositorio }}"
         user_id: "{{ usuario }}" # Asumiendo que 'usuario' es el propietario de la API token
