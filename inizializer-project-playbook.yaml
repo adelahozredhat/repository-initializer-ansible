@@ -20,9 +20,9 @@
     # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
     
     # Parámetros de Webhook
-    # webhook_url: "https://awx-demo-awx.apps-crc.testing/api/v2/job_templates/7/launch/"
-    # webhook_secret: "un-secreto-seguro"
-    # webhook_events: ["push", "pull_request"]
+    # aap_url_job_launch: "https://awx-demo-awx.apps-crc.testing/api/v2/job_templates/7/launch/"
+    # aap_token: "un-secreto-seguro"
+    webhook_events: ["push", "pull_request"]
 
     # Parámetros de Comunicación
     # email_destinatario: "equipo@miempresa.com"
@@ -136,8 +136,8 @@
       community.general.github_webhook:
         token: "{{ newly_created_pat }}"
         repo: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "{{ webhook_url }}"
-        secret: "{{ webhook_secret }}"
+        url: "{{ aap_url_job_launch }}"
+        secret: "{{ aap_token }}"
         events: "{{ webhook_events }}"
         state: present
       when: tipo_repositorio == 'github' and github_result is succeeded
@@ -166,8 +166,8 @@
       community.general.gitlab_hook:
         api_token: "{{ newly_created_pat }}"
         project_id: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "{{ webhook_url }}"
-        token: "{{ webhook_secret }}"
+        url: "{{ aap_url_job_launch }}"
+        token: "{{ aap_token }}"
         push_events: true
         merge_requests_events: true
         state: present
@@ -205,21 +205,22 @@
 
     - name: 3.3 Crear Webhook en Gitea (API)
       ansible.builtin.uri:
-        url: "https://{{ git_host }}/api/v1/repos/{{ grupo }}/{{ repo_nuevo }}/hooks"
+        url: "https://simple-gitea-ocs-gitea.apps-crc.testing/api/v1/repos/{{ gitea_username }}/Prueba/hooks"
         method: POST
         headers:
           Authorization: "token {{ newly_created_pat }}" # <--- USANDO EL NUEVO PAT
         body_format: json
         body:
-          type: "gitea"
+          type: "gogs"
           config:
-            url: "{{ webhook_url }}"
-            secret: "{{ webhook_secret }}"
-            insecure_ssl: "0"
+            url: "{{ aap_url_job_launch }}"
+            content_type: "json"
+            secret: "{{ aap_token }}"
+          authorization_header: "Bearer {{ aap_token }}"
           events: "{{ webhook_events }}"
           active: true
-        validate_certs: "{{validate_certs}}"
         status_code: [201]
+        validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'gitea' and gitea_create_result is succeeded
 
     # --- CLONACIÓN Y PUSH DEL CONTENIDO PARA GITEA ---
@@ -286,7 +287,7 @@
 
           Se ha completado la automatización.
           - URL de Acceso: {{ repo_final_url }}
-          - Webhook ({{ webhook_url }}) configurado.
+          - Webhook ({{ aap_url_job_launch }}) configurado.
           - PAT de usuario creado para este proceso.
 
           🚨 ¡ADVERTENCIA DE SEGURIDAD! El nuevo PAT de usuario tiene alcance amplio y es visible 
