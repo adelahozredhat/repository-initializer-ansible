@@ -275,9 +275,6 @@
     # =========================================================================
     # 4. Tareas de Comunicación
     # =========================================================================
-    - debug:
-        msg: "{{repo_final_url}} - {{smtp_host}} - {{canales_comunicacion}}"
-
     - name: 4.1 ENVIAR NOTIFICACIÓN POR EMAIL (ansible.builtin.mail)
       ansible.builtin.mail:
         host: "{{ smtp_host }}"
