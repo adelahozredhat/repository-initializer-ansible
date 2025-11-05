@@ -15,6 +15,7 @@
     # git_user: "mi_usuario"
     # grupo: "mi_org"
     repo_base: "template-ansible-playbooks"
+    repo_base_branch: develop
     # repo_nuevo: "ansible-playbook-example"
     # tipo_repositorio: "gitlab" #|"github" | "gitlab" | "gitea"
     # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
@@ -231,7 +232,7 @@
         # La URL de clonación debe usar el nuevo PAT
         repo: "https://{{ newly_created_pat }}@{{ git_host }}/{{ grupo }}/{{ repo_base }}.git"
         dest: "{{ local_path }}"
-        version: master
+        version: "{{ repo_base_branch }}"
         clone: yes
         update: yes
       when: tipo_repositorio == 'gitea' and repo_final_url is defined
