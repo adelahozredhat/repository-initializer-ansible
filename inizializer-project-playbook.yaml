@@ -91,16 +91,17 @@
 
 
     # --- 0.3 Gitea PAT Creation (using URI)
-    - name: 0.3 Crear PAT de Usuario en Gitea
+    - name: Create PAT in GITEA for lab-user
       ansible.builtin.uri:
         url: "https://{{ git_host }}/api/v1/users/{{ git_user }}/tokens"
         method: POST
-        headers:
-          Authorization: "token {{ git_token }}" # Usar el token del admin para crear el token para 'usuario'
         body_format: json
+        user: "{{ git_user }}"
+        password: "{{ git_token }}"
+        force_basic_auth: yes
         body:
-          name: "PAT for {{ repo_nuevo }}"
-          scopes: ["write:repository", "read:repository", "write:issue", "read:issue"] # Alcance amplio
+          name: "PAT for lab"
+          scopes: ["write:repository", "write:issue", "write:activitypub", "write:misc", "write:notification" , "write:organization", "write:package", "write:user"] # Alcance amplio
         status_code: [201]
         validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'gitea'
