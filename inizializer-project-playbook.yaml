@@ -100,7 +100,7 @@
         password: "{{ git_token }}"
         force_basic_auth: yes
         body:
-          name: "PAT for lab"
+          name: "PAT for lab2"
           scopes: ["write:repository", "write:issue", "write:activitypub", "write:misc", "write:notification" , "write:organization", "write:package", "write:user"] # Alcance amplio
         status_code: [201]
         validate_certs: "{{validate_certs}}"
