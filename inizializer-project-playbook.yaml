@@ -132,9 +132,9 @@
             query_parameters={
               'name': 'Demo Job Template'
             },
-            controller_host=aap_hostname,
-            controller_username=aap_username,
-            controller_password=aap_password,
+            host=aap_hostname,
+            username=aap_username,
+            password=aap_password,
             verify_ssl=aap_validate_certs
           ) }}
 
