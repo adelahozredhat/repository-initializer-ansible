@@ -117,6 +117,10 @@
       ansible.builtin.set_fact:
         newly_created_pat: "{{ git_token }}"
 
+    - name: 4. Display Recovered Information
+      ansible.builtin.debug:
+        msg: "{{aap_host}} - {{aap_username}} - {{aap_password}}"
+
     - name: 1. Use controller_api lookup to filter Job Templates by Name
       # Path: 'job_templates' is the API endpoint.
       # Query: The 'name' parameter filters the results on the server-side.
@@ -128,10 +132,10 @@
             query_parameters={
               'name': 'Demo Job Template'
             },
-            controller_host={{aap_host}},
-            controller_username={{aap_username}},
-            controller_password={{aap_password}},
-            verify_ssl={{aap_verify_ssl}}
+            controller_host=aap_host,
+            controller_username=aap_username,
+            controller_password=aap_password,
+            verify_ssl=false
           ) }}
 
     - name: 4. Display Recovered Information
