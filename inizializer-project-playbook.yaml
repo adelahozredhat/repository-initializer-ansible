@@ -170,11 +170,11 @@
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_job_template_webhook_key.webhook_key}}"
+        msg: "{{aap_job_template_webhook_key}}"
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_job_template_webhook_key.webhook_receiver}}"
+        msg: "{{aap_job_template_content_results[0].related.webhook_receiver}}"
 
     - name: "Delete the Authentication Token used"
       ansible.builtin.uri:
@@ -235,7 +235,7 @@
       community.general.github_webhook:
         token: "{{ newly_created_pat }}"
         repo: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "https://{{ aap_hostname }}{{ webhook_events }}"
+        url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
         secret: "{{ aap_job_template_webhook_key.webhook_key }}"
         events: "{{ webhook_events }}"
         state: present
@@ -260,7 +260,7 @@
       community.general.gitlab_hook:
         api_token: "{{ newly_created_pat }}"
         project_id: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "https://{{ aap_hostname }}{{ webhook_events }}"
+        url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
         token: "{{ aap_job_template_webhook_key.webhook_key }}"
         push_events: true
         merge_requests_events: true
@@ -297,7 +297,7 @@
         body:
           type: "gogs"
           config:
-            url: "https://{{ aap_hostname }}{{ webhook_events }}"
+            url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
             content_type: "json"
             secret: "{{ aap_job_template_webhook_key.webhook_key }}"
           authorization_header: "Bearer {{ aap_job_template_webhook_key.webhook_key }}"
@@ -378,7 +378,7 @@
 
           Se ha completado la automatización.
           - URL de Acceso: {{ repo_final_url }}
-          - Webhook (https://{{ aap_hostname }}{{ webhook_events }}) configurado.
+          - Webhook (https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}) configurado.
           - PAT de usuario creado para este proceso.
 
           🚨 ¡ADVERTENCIA DE SEGURIDAD! El nuevo PAT de usuario tiene alcance amplio y es visible 
