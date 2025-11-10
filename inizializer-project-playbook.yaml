@@ -22,7 +22,7 @@
     
     # Parámetros de Webhook
     # aap_url_job_launch: "https://awx-demo-awx.apps-crc.testing/api/v2/job_templates/7/launch/"
-    # aap_token: "un-secreto-seguro"
+    # aap_token_aplication: "un-secreto-seguro"
     webhook_events: ["push", "pull_request"]
 
     # Parámetros de Comunicación
@@ -138,7 +138,7 @@
         token: "{{ newly_created_pat }}"
         repo: "{{ grupo }}/{{ repo_nuevo }}"
         url: "{{ aap_url_job_launch }}"
-        secret: "{{ aap_token }}"
+        secret: "{{ aap_token_aplication }}"
         events: "{{ webhook_events }}"
         state: present
       when: tipo_repositorio == 'github' and github_result is succeeded
@@ -168,7 +168,7 @@
         api_token: "{{ newly_created_pat }}"
         project_id: "{{ grupo }}/{{ repo_nuevo }}"
         url: "{{ aap_url_job_launch }}"
-        token: "{{ aap_token }}"
+        token: "{{ aap_token_aplication }}"
         push_events: true
         merge_requests_events: true
         state: present
@@ -216,8 +216,8 @@
           config:
             url: "{{ aap_url_job_launch }}"
             content_type: "json"
-            secret: "{{ aap_token }}"
-          authorization_header: "Bearer {{ aap_token }}"
+            secret: "{{ aap_token_aplication }}"
+          authorization_header: "Bearer {{ aap_token_aplication }}"
           events: "{{ webhook_events }}"
           active: true
         status_code: [201]
@@ -243,7 +243,7 @@
       ansible.builtin.file:
         path: "{{ local_path }}/.git"
         state: absent
-      when: tipo_repositorio == 'gitea' and repo_final_url is defined
+      when: repo_final_url is defined
 
     - name: 3.6 Inicializar nuevo repositorio Git, agregar contenido y commit
       ansible.builtin.command: "{{ item }}"
@@ -254,8 +254,9 @@
         - git add .
         - git config --global user.email "{{git_user}}@example.com"
         - git config --global user.name "{{git_user}}"
+        - git config http.sslVerify false
         - git commit -m 'Initial commit from template {{ repo_base }}'
-      when: tipo_repositorio == 'gitea' and repo_final_url is defined
+      when: repo_final_url is defined
 
     - name: 3.7 Añadir remoto y enviar el contenido al nuevo repositorio
       ansible.builtin.command: "{{ item }}"
@@ -263,15 +264,15 @@
         chdir: "{{ local_path }}"
       loop:
         # La URL de push debe usar el nuevo PAT
-        - git remote add origin https://{{ newly_created_pat }}@{{ git_host }}/{{ grupo }}/{{ repo_nuevo }}.git
+        - git remote add origin https://{{ newly_created_pat }}@{{ repo_final_url }}.git
         - git push -u origin master
-      when: tipo_repositorio == 'gitea' and repo_final_url is defined
+      when: repo_final_url is defined
 
     - name: 3.8 Limpiar el directorio temporal
       ansible.builtin.file:
         path: "{{ local_path }}"
         state: absent
-      when: tipo_repositorio == 'gitea' and repo_final_url is defined
+      when: repo_final_url is defined
 
     # =========================================================================
     # 4. Tareas de Comunicación
