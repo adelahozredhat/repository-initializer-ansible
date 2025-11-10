@@ -215,6 +215,11 @@
 
     # --- CLONACIÓN Y PUSH DEL CONTENIDO PARA GITEA ---
     # Nota: Aquí se usará el PAT para autenticarse en las URLs de clonación
+
+
+    - name: 1.3 Establecer URL final
+      ansible.builtin.set_fact:
+        repo_final_url: "{{ git_host }}/{{ grupo }}/{{ repo_nuevo }}"
     
     - name: 3.4 Clonar el repositorio base localmente
       ansible.builtin.git:
@@ -224,7 +229,7 @@
         version: "{{ repo_base_branch }}"
         clone: yes
         update: yes
-      when: tipo_repositorio == 'gitea' and repo_final_url is defined
+      when: repo_final_url is defined
       
     # ... (Resto de tareas de Gitea - limpieza y push, usando el nuevo PAT en la URL del push) ...
 
@@ -246,10 +251,6 @@
         - git config http.sslVerify false
         - git commit -m 'Initial commit from template {{ repo_base }}'
       when: repo_final_url is defined
-
-    - name: 1.3 Establecer URL final
-      ansible.builtin.set_fact:
-        repo_final_url: "{{ git_host }}/{{ grupo }}/{{ repo_nuevo }}"
 
     - name: 3.7 Añadir remoto y enviar el contenido al nuevo repositorio
       ansible.builtin.command: "{{ item }}"
