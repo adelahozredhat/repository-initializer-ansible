@@ -131,7 +131,7 @@
             controller_host=aap_host,
             controller_username=aap_username,
             controller_password=aap_password,
-            verify_ssl=false
+            verify_ssl=aap_verify_ssl
           ) }}
 
     - name: 4. Display Recovered Information
