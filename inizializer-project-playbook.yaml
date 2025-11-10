@@ -149,6 +149,9 @@
     - name: "Set the oauth token to be used since now"
       ansible.builtin.set_fact:
         aap_job_template_content: "{{ aap_job_template.content }}"
+
+    - name: "Set the oauth token to be used since now"
+      ansible.builtin.set_fact:
         aap_job_template_content_results: "{{ aap_job_template_content.results }}"
 
     - name: 4. Display Recovered Information
