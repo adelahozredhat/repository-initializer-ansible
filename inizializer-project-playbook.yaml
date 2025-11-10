@@ -14,8 +14,8 @@
     # Parámetros de Repositorio
     # git_user: "mi_usuario"
     # grupo: "mi_org"
-    repo_base: "template-ansible-playbooks"
-    repo_base_branch: develop
+    repo_base: "template-minimal-ansible-playbooks"
+    repo_base_branch: master
     # repo_nuevo: "ansible-playbook-example"
     # tipo_repositorio: "gitlab" #|"github" | "gitlab" | "gitea"
     # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
