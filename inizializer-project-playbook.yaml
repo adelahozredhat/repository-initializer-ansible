@@ -156,7 +156,7 @@
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_oauthtoken_url}}"
+        msg: "{{aap_job_template_content_results[0].related.webhook_key}}"
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
