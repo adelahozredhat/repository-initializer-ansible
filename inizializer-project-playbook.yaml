@@ -132,10 +132,10 @@
             query_parameters={
               'name': 'Demo Job Template'
             },
-            controller_host=aap_host,
+            controller_host=aap_hostname,
             controller_username=aap_username,
             controller_password=aap_password,
-            verify_ssl=false
+            verify_ssl=aap_validate_certs
           ) }}
 
     - name: 4. Display Recovered Information
