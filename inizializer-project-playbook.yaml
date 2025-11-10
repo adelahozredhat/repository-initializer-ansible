@@ -141,7 +141,7 @@
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
         force_basic_auth: yes  # Required for basic auth
-        validate_certs: yes    # Set to 'no' if using self-signed certs (not recommended for production)
+        validate_certs:  "{{ aap_validate_certs }}"    # Set to 'no' if using self-signed certs (not recommended for production)
         status_code: 200
         return_content: yes
       register: aap_job_template
