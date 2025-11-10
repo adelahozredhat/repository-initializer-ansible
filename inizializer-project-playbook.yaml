@@ -131,11 +131,7 @@
             'job_templates',
             query_parameters={
               'name': 'Demo Job Template'
-            },
-            host=aap_hostname,
-            username=aap_username,
-            password=aap_password,
-            verify_ssl=aap_validate_certs
+            }
           ) }}
 
     - name: 4. Display Recovered Information
