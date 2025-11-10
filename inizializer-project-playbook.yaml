@@ -51,67 +51,71 @@
     #    IMPORTANTE: Este token se usará para el resto de las operaciones.
     # =========================================================================
 
-    # --- 0.1 GitHub PAT Creation (using URI to simulate PAT creation for auth user)
-    - name: 0.1 Crear PAT de Usuario en GitHub
-      ansible.builtin.uri:
-        url: "https://{{ git_host }}/user/tokens"
-        method: POST
-        headers:
-          Authorization: "token {{ git_token }}"
-        body_format: json
-        body:
-          scopes: ["repo", "workflow"] # Alcance amplio para crear y modificar repos
-          note: "PAT for {{ repo_nuevo }}"
-        status_code: [201]
-        validate_certs: "{{validate_certs}}"
-      when: tipo_repositorio == 'github'
-      register: pat_creation_result_github
+    # # --- 0.1 GitHub PAT Creation (using URI to simulate PAT creation for auth user)
+    # - name: 0.1 Crear PAT de Usuario en GitHub
+    #   ansible.builtin.uri:
+    #     url: "https://{{ git_host }}/user/tokens"
+    #     method: POST
+    #     headers:
+    #       Authorization: "token {{ git_token }}"
+    #     body_format: json
+    #     body:
+    #       scopes: ["repo", "workflow"] # Alcance amplio para crear y modificar repos
+    #       note: "PAT for {{ repo_nuevo }}"
+    #     status_code: [201]
+    #     validate_certs: "{{validate_certs}}"
+    #   when: tipo_repositorio == 'github'
+    #   register: pat_creation_result_github
       
-    - name: 0.1.1 Setear nuevo PAT para GitHub
-      ansible.builtin.set_fact:
-        newly_created_pat: "{{ pat_creation_result_github.json.token }}"
-      when: tipo_repositorio == 'github' and pat_creation_result_github is succeeded
+    # - name: 0.1.1 Setear nuevo PAT para GitHub
+    #   ansible.builtin.set_fact:
+    #     newly_created_pat: "{{ pat_creation_result_github.json.token }}"
+    #   when: tipo_repositorio == 'github' and pat_creation_result_github is succeeded
 
 
-    # --- 0.2 GitLab PAT Creation (using dedicated module)
-    - name: 0.2 Crear PAT de Usuario en GitLab
-      community.general.gitlab_group_access_token:
-        api_url: "https://{{ git_host }}"
-        api_token: "{{ git_token }}"
-        user_id: "{{ git_user }}" # Asumiendo que 'usuario' es el propietario de la API token
-        name: "PAT for {{ repo_nuevo }}"
-        scopes: ["api", "read_repository", "write_repository"] # Alcance amplio para crear y modificar repos
-        state: present
-      when: tipo_repositorio == 'gitlab'
-      register: pat_creation_result_gitlab
+    # # --- 0.2 GitLab PAT Creation (using dedicated module)
+    # - name: 0.2 Crear PAT de Usuario en GitLab
+    #   community.general.gitlab_group_access_token:
+    #     api_url: "https://{{ git_host }}"
+    #     api_token: "{{ git_token }}"
+    #     user_id: "{{ git_user }}" # Asumiendo que 'usuario' es el propietario de la API token
+    #     name: "PAT for {{ repo_nuevo }}"
+    #     scopes: ["api", "read_repository", "write_repository"] # Alcance amplio para crear y modificar repos
+    #     state: present
+    #   when: tipo_repositorio == 'gitlab'
+    #   register: pat_creation_result_gitlab
 
-    - name: 0.2.1 Setear nuevo PAT para GitLab
-      ansible.builtin.set_fact:
-        newly_created_pat: "{{ pat_creation_result_gitlab.access_token }}"
-      when: tipo_repositorio == 'gitlab' and pat_creation_result_gitlab is succeeded
+    # - name: 0.2.1 Setear nuevo PAT para GitLab
+    #   ansible.builtin.set_fact:
+    #     newly_created_pat: "{{ pat_creation_result_gitlab.access_token }}"
+    #   when: tipo_repositorio == 'gitlab' and pat_creation_result_gitlab is succeeded
 
 
-    # --- 0.3 Gitea PAT Creation (using URI)
-    - name: Create PAT in GITEA for lab-user
-      ansible.builtin.uri:
-        url: "https://{{ git_host }}/api/v1/users/{{ git_user }}/tokens"
-        method: POST
-        body_format: json
-        user: "{{ git_user }}"
-        password: "{{ git_token }}"
-        force_basic_auth: yes
-        body:
-          name: "PAT for lab2"
-          scopes: ["write:repository", "write:issue", "write:activitypub", "write:misc", "write:notification" , "write:organization", "write:package", "write:user"] # Alcance amplio
-        status_code: [201]
-        validate_certs: "{{validate_certs}}"
-      when: tipo_repositorio == 'gitea'
-      register: pat_creation_result_gitea
+    # # --- 0.3 Gitea PAT Creation (using URI)
+    # - name: Create PAT in GITEA for lab-user
+    #   ansible.builtin.uri:
+    #     url: "https://{{ git_host }}/api/v1/users/{{ git_user }}/tokens"
+    #     method: POST
+    #     body_format: json
+    #     user: "{{ git_user }}"
+    #     password: "{{ git_token }}"
+    #     force_basic_auth: yes
+    #     body:
+    #       name: "PAT for lab2"
+    #       scopes: ["write:repository", "write:issue", "write:activitypub", "write:misc", "write:notification" , "write:organization", "write:package", "write:user"] # Alcance amplio
+    #     status_code: [201]
+    #     validate_certs: "{{validate_certs}}"
+    #   when: tipo_repositorio == 'gitea'
+    #   register: pat_creation_result_gitea
+
+    # - name: 0.3.1 Setear nuevo PAT para Gitea
+    #   ansible.builtin.set_fact:
+    #     newly_created_pat: "{{ pat_creation_result_gitea.json.sha1 }}"
+    #   when: tipo_repositorio == 'gitea' and pat_creation_result_gitea is succeeded
 
     - name: 0.3.1 Setear nuevo PAT para Gitea
       ansible.builtin.set_fact:
-        newly_created_pat: "{{ pat_creation_result_gitea.json.sha1 }}"
-      when: tipo_repositorio == 'gitea' and pat_creation_result_gitea is succeeded
+        newly_created_pat: "{{ git_token }}"
 
 
     # =========================================================================
@@ -143,11 +147,6 @@
         state: present
       when: tipo_repositorio == 'github' and github_result is succeeded
 
-    - name: 1.3 Establecer URL final para GitHub
-      ansible.builtin.set_fact:
-        repo_final_url: "{{ github_result.repository.html_url }}"
-      when: tipo_repositorio == 'github' and github_result is succeeded
-
 
     # =========================================================================
     # 2. Tareas de Creación (GitLab) - Continuación
@@ -174,11 +173,6 @@
         state: present
       when: tipo_repositorio == 'gitlab' and gitlab_result is succeeded
 
-    - name: 2.3 Establecer URL final para GitLab
-      ansible.builtin.set_fact:
-        repo_final_url: "{{ gitlab_result.project.web_url }}"
-      when: tipo_repositorio == 'gitlab' and gitlab_result is succeeded
-
     # =========================================================================
     # 3. Tareas de Creación (Gitea) - Continuación
     # =========================================================================
@@ -198,11 +192,6 @@
         validate_certs: "{{validate_certs}}"
       when: tipo_repositorio == 'gitea' and newly_created_pat is defined
       register: gitea_create_result
-
-    - name: 3.2 Establecer URL final para Gitea
-      ansible.builtin.set_fact:
-        repo_final_url: "{{ gitea_create_result.json.html_url }}"
-      when: tipo_repositorio == 'gitea' and gitea_create_result is succeeded
 
     - name: 3.3 Crear Webhook en Gitea (API)
       ansible.builtin.uri:
@@ -257,6 +246,10 @@
         - git config http.sslVerify false
         - git commit -m 'Initial commit from template {{ repo_base }}'
       when: repo_final_url is defined
+
+    - name: 1.3 Establecer URL final
+      ansible.builtin.set_fact:
+        repo_final_url: "{{ git_host }}/{{ grupo }}/{{ repo_nuevo }}"
 
     - name: 3.7 Añadir remoto y enviar el contenido al nuevo repositorio
       ansible.builtin.command: "{{ item }}"
