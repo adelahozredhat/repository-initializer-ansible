@@ -146,9 +146,14 @@
         return_content: yes
       register: aap_job_template
 
+    - name: "Set the oauth token to be used since now"
+      ansible.builtin.set_fact:
+        aap_job_template_content: "{{ aap_job_template.content }}"
+        aap_job_template_content_results: "{{ aap_job_template_content.results }}"
+
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_job_template.content| from_json |results}}"
+        msg: "{{aap_oauthtoken_url}}"
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
