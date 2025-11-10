@@ -42,7 +42,7 @@
     notification_title: "✅ Playbook Finalizado Exitosamente"
     notification_text: "El playbook de configuración ha terminado en el servidor {{ inventory_hostname }}."
 
-    job_Template_lifecycle: Demo Job Template
+    job_Template_lifecycle: playbook_livecycle
   tasks:
 
     # =========================================================================
