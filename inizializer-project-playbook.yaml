@@ -148,7 +148,7 @@
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_job_template.content.results}}"
+        msg: "{{aap_job_template.content| from_json |.results}}"
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
