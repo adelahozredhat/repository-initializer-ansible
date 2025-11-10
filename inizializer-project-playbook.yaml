@@ -120,7 +120,7 @@
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
-        url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search='{{job_Template_lifecycle}}'"
+        url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search={{job_Template_lifecycle}}"
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
         method: GET
