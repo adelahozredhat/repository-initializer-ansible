@@ -170,7 +170,7 @@
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_job_template_webhook_key}}"
+        msg: "{{aap_job_template_webhook_key.json.webhook_key}}"
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
@@ -236,7 +236,7 @@
         token: "{{ newly_created_pat }}"
         repo: "{{ grupo }}/{{ repo_nuevo }}"
         url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
-        secret: "{{ aap_job_template_webhook_key.webhook_key }}"
+        secret: "{{ aap_job_template_webhook_key.json.webhook_key }}"
         events: "{{ webhook_events }}"
         state: present
       when: tipo_repositorio == 'github' and github_result is succeeded
@@ -261,7 +261,7 @@
         api_token: "{{ newly_created_pat }}"
         project_id: "{{ grupo }}/{{ repo_nuevo }}"
         url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
-        token: "{{ aap_job_template_webhook_key.webhook_key }}"
+        token: "{{ aap_job_template_webhook_key.json.webhook_key }}"
         push_events: true
         merge_requests_events: true
         state: present
@@ -299,8 +299,8 @@
           config:
             url: "https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}"
             content_type: "json"
-            secret: "{{ aap_job_template_webhook_key.webhook_key }}"
-          authorization_header: "Bearer {{ aap_job_template_webhook_key.webhook_key }}"
+            secret: "{{ aap_job_template_webhook_key.json.webhook_key }}"
+          authorization_header: "Bearer {{ aap_job_template_webhook_key.json.webhook_key }}"
           events: "{{ webhook_events }}"
           active: true
         status_code: [201]
