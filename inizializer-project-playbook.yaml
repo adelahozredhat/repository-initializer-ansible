@@ -21,8 +21,6 @@
     # git_host: "gitea.miempresa.com" #"api.github.com" # | "gitlab.com" | "gitea.miempresa.com"
     
     # Parámetros de Webhook
-    # aap_url_job_launch: "https://awx-demo-awx.apps-crc.testing/api/v2/job_templates/7/launch/"
-    # aap_token_aplication: "un-secreto-seguro"
     webhook_events: ["push", "pull_request"]
 
     # Parámetros de Comunicación
@@ -41,8 +39,8 @@
     validate_certs: false
 
     # teams_webhook_url: "https://tuhost.webhook.office.com/webhookb2/..."
-    # notification_title: "✅ Playbook Finalizado Exitosamente"
-    # notification_text: "El playbook de configuración ha terminado en el servidor {{ inventory_hostname }}."
+    notification_title: "✅ Playbook Finalizado Exitosamente"
+    notification_text: "El playbook de configuración ha terminado en el servidor {{ inventory_hostname }}."
 
     job_Template_lifecycle: Demo Job Template
   tasks:
@@ -160,7 +158,7 @@
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
-        url: "https://{{aap_hostname}}/{{aap_job_template.content.results[0].related.webhook_key}}"
+        url: "https://{{aap_hostname}}/{{aap_job_template_content_results[0].related.webhook_key}}"
         method: GET
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
@@ -173,6 +171,10 @@
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
         msg: "{{aap_job_template_webhook_key.webhook_key}}"
+
+    - name: 4. Display Recovered Information
+      ansible.builtin.debug:
+        msg: "{{aap_job_template_webhook_key.webhook_receiver}}"
 
     - name: "Delete the Authentication Token used"
       ansible.builtin.uri:
@@ -233,8 +235,8 @@
       community.general.github_webhook:
         token: "{{ newly_created_pat }}"
         repo: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "{{ aap_url_job_launch }}"
-        secret: "{{ aap_token_aplication }}"
+        url: "https://{{ aap_hostname }}{{ webhook_events }}"
+        secret: "{{ aap_job_template_webhook_key.webhook_key }}"
         events: "{{ webhook_events }}"
         state: present
       when: tipo_repositorio == 'github' and github_result is succeeded
@@ -258,8 +260,8 @@
       community.general.gitlab_hook:
         api_token: "{{ newly_created_pat }}"
         project_id: "{{ grupo }}/{{ repo_nuevo }}"
-        url: "{{ aap_url_job_launch }}"
-        token: "{{ aap_token_aplication }}"
+        url: "https://{{ aap_hostname }}{{ webhook_events }}"
+        token: "{{ aap_job_template_webhook_key.webhook_key }}"
         push_events: true
         merge_requests_events: true
         state: present
@@ -295,10 +297,10 @@
         body:
           type: "gogs"
           config:
-            url: "{{ aap_url_job_launch }}"
+            url: "https://{{ aap_hostname }}{{ webhook_events }}"
             content_type: "json"
-            secret: "{{ aap_token_aplication }}"
-          authorization_header: "Bearer {{ aap_token_aplication }}"
+            secret: "{{ aap_job_template_webhook_key.webhook_key }}"
+          authorization_header: "Bearer {{ aap_job_template_webhook_key.webhook_key }}"
           events: "{{ webhook_events }}"
           active: true
         status_code: [201]
@@ -376,7 +378,7 @@
 
           Se ha completado la automatización.
           - URL de Acceso: {{ repo_final_url }}
-          - Webhook ({{ aap_url_job_launch }}) configurado.
+          - Webhook (https://{{ aap_hostname }}{{ webhook_events }}) configurado.
           - PAT de usuario creado para este proceso.
 
           🚨 ¡ADVERTENCIA DE SEGURIDAD! El nuevo PAT de usuario tiene alcance amplio y es visible 
