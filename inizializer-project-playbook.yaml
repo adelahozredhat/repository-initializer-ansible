@@ -118,15 +118,34 @@
       ansible.builtin.set_fact:
         newly_created_pat: "{{ git_token }}"
 
+    - name: Create the Access Token for the Application in AAP
+      ansible.platform.token:
+        gateway_hostname: "{{ aap_hostname }}"
+        gateway_username: "{{ aap_username }}"
+        gateway_password: "{{ aap_password }}"
+        validate_certs: false
+        
+        # Link the token to the application
+        scope: "write"
+        description: "PAT for lab"
+        state: present
+      register: awx_token
+
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
         url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search={{job_Template_lifecycle| urlencode}}"
         headers:
-          Authorization: "{{ aap_token }}"
+          Authorization: "{{ awx_token.ansible_facts.aap_token.token }}"
         method: GET
         status_code: 200 # The desired HTTP status code
         validate_certs: "{{aap_validate_certs}}" # Set to true if using proper SSL/TLS certificates
       register: aap_job_template
+
+    - name: Delete the Access Token for the Application in AAP
+      ansible.platform.token:
+        description: "PAT for lab"
+        state: absent
+      register: awx_token
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
