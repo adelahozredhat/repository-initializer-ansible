@@ -44,6 +44,7 @@
     # notification_title: "✅ Playbook Finalizado Exitosamente"
     # notification_text: "El playbook de configuración ha terminado en el servidor {{ inventory_hostname }}."
 
+    job_Template_lifecycle: Demo Job Template
   tasks:
 
     # =========================================================================
@@ -117,22 +118,38 @@
       ansible.builtin.set_fact:
         newly_created_pat: "{{ git_token }}"
 
+    - name: ✅ Wait for the URL to be available (HTTP 200)
+      ansible.builtin.uri:
+        url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search='{{job_Template_lifecycle}}'"
+        user: "{{ aap_username }}"
+        password: "{{ aap_password }}"
+        method: GET
+        status_code: 200 # The desired HTTP status code
+        validate_certs: "{{aap_validate_certs}}" # Set to true if using proper SSL/TLS certificates
+      register: aap_job_template
+
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
-        msg: "{{aap_hostname}} - {{aap_username}} - {{aap_password}} - {{aap_validate_certs}}"
+        msg: "{{aap_job_template}}"
 
-    - name: 1. Use controller_api lookup to filter Job Templates by Name
-      # Path: 'job_templates' is the API endpoint.
-      # Query: The 'name' parameter filters the results on the server-side.
-      set_fact:
-        jt_lookup_result: >
-          {{ lookup(
-            'ansible.controller.controller_api',
-            'job_templates',
-            query_parameters={
-              'name': 'Demo Job Template'
-            }
-          ) }}
+      
+
+    # - name: 1. Use controller_api lookup to filter Job Templates by Name
+    #   # Path: 'job_templates' is the API endpoint.
+    #   # Query: The 'name' parameter filters the results on the server-side.
+    #   set_fact:
+    #     jt_lookup_result: >
+    #       {{ lookup(
+    #         'ansible.controller.controller_api',
+    #         'job_templates',
+    #         query_parameters={
+    #           'name': 'Demo Job Template'
+    #         },
+    #         host=aap_hostname,
+    #         username=aap_username,
+    #         password=aap_password,
+    #         verify_ssl=aap_validate_certs
+    #       ) }}
 
     - name: 4. Display Recovered Information
       ansible.builtin.debug:
