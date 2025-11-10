@@ -146,6 +146,26 @@
         return_content: yes
       register: aap_job_template
 
+    - name: 4. Display Recovered Information
+      ansible.builtin.debug:
+        msg: "{{aap_job_template.content.results[0].related.webhook_key}}"
+
+    - name: ✅ Wait for the URL to be available (HTTP 200)
+      ansible.builtin.uri:
+        url: "https://{{aap_hostname}}/{{aap_job_template.content.results[0].related.webhook_key}}"
+        method: GET
+        user: "{{ aap_username }}"
+        password: "{{ aap_password }}"
+        force_basic_auth: yes  # Required for basic auth
+        validate_certs:  "{{ aap_validate_certs }}"    # Set to 'no' if using self-signed certs (not recommended for production)
+        status_code: 200
+        return_content: yes
+      register: aap_job_template_webhook_key
+
+    - name: 4. Display Recovered Information
+      ansible.builtin.debug:
+        msg: "{{aap_job_template_webhook_key.webhook_key}}"
+
     - name: "Delete the Authentication Token used"
       ansible.builtin.uri:
         url: "https://{{ aap_hostname }}{{aap_oauthtoken_url }}"
@@ -156,10 +176,6 @@
         validate_certs: "{{ aap_validate_certs }}"
         status_code: 204
       when: aap_oauthtoken_url is defined
-
-    - name: 4. Display Recovered Information
-      ansible.builtin.debug:
-        msg: "{{aap_job_template}}"
 
       
 
@@ -180,9 +196,9 @@
     #         verify_ssl=aap_validate_certs
     #       ) }}
 
-    - name: 4. Display Recovered Information
-      ansible.builtin.debug:
-        msg: "{{jt_lookup_result}}"
+    # - name: 4. Display Recovered Information
+    #   ansible.builtin.debug:
+    #     msg: "{{jt_lookup_result}}"
 
     # https://example-ansible-automation-platform.apps-crc.testing/api/controller/v2/job_templates/7/webhook_key/
 
