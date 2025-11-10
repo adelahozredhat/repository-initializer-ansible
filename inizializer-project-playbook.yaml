@@ -123,7 +123,7 @@
       set_fact:
         jt_lookup_result: >
           {{ lookup(
-            'awx.awx.controller_api',
+            'ansible.controller.awx.controller_api',
             'job_templates',
             query_parameters={
               'name': 'Demo Job Template'
@@ -131,7 +131,6 @@
             controller_host=aap_host,
             controller_username=aap_username,
             controller_password=aap_password,
-            # Use environment variable CONTROLLER_VERIFY_SSL for cert validation
             verify_ssl=aap_verify_ssl
           ) }}
 
