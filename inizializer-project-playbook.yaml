@@ -122,7 +122,7 @@
       ansible.builtin.uri:
         url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search={{job_Template_lifecycle| urlencode}}"
         headers:
-          Authorization: "{{ oauth_token }}"
+          Authorization: "{{ aap_token }}"
         method: GET
         status_code: 200 # The desired HTTP status code
         validate_certs: "{{aap_validate_certs}}" # Set to true if using proper SSL/TLS certificates
