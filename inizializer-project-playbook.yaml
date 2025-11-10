@@ -123,7 +123,7 @@
       set_fact:
         jt_lookup_result: >
           {{ lookup(
-            'ansible.controller.awx.controller_api',
+            'ansible.controller.controller_api',
             'job_templates',
             query_parameters={
               'name': 'Demo Job Template'
