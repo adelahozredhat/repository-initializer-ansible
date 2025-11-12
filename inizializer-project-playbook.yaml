@@ -112,7 +112,7 @@
     #     newly_created_pat: "{{ pat_creation_result_gitea.json.sha1 }}"
     #   when: tipo_repositorio == 'gitea' and pat_creation_result_gitea is succeeded
 
-    - name: 0.3.1 Setear nuevo PAT para Gitea
+    - name: 0.3.1 Setear nuevo PAT
       ansible.builtin.set_fact:
         newly_created_pat: "{{ git_token }}"
 
