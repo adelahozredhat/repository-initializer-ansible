@@ -42,7 +42,14 @@
     notification_title: "✅ Playbook Finalizado Exitosamente"
     notification_text: "El playbook de configuración ha terminado en el servidor {{ inventory_hostname }}."
 
-    job_Template_lifecycle: playbook_livecycle
+    is_awx: "{{ awx_job_id is defined }}"
+    path_token: "{{ '/api/v2/tokens/' if is_awx else '/api/gateway/v1/tokens/' }}"
+    path_job_teamplte: "{{ '/api/v2/job_templates/' if is_awx else '/api/controller/v2/job_templates/' }}"
+
+    aap_hostname: "{{ lookup('env', 'TOWER_HOST') | aap_hostname }}"
+    aap_username: "{{ lookup('env', 'TOWER_USERNAME') | aap_username }}"
+    aap_password: "{{ lookup('env', 'TOWER_PASSWORD') | aap_password }}"
+    aap_validate_certs: "{{ lookup('env', 'TOWER_VERIFY_SSL') | aap_validate_certs }}"
   tasks:
 
     # =========================================================================
@@ -118,7 +125,7 @@
 
     - name: "Get the Authentication Token for the future requests"
       ansible.builtin.uri:
-        url: "https://{{ aap_hostname }}/api/gateway/v1/tokens/"
+        url: "https://{{ aap_hostname }}{{path_token}}"
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
         method: POST
@@ -134,7 +141,7 @@
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
-        url: "https://{{aap_hostname}}/api/controller/v2/job_templates/?search={{job_Template_lifecycle| urlencode}}"
+        url: "https://{{aap_hostname}}{{path_job_teamplte}}?search={{job_Template_lifecycle| urlencode}}"
         method: GET
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
