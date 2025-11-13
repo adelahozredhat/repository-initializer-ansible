@@ -398,6 +398,7 @@
           Saludos,
           Plataforma de Automatización AWX/AAP
       when: repo_final_url is defined and repo_final_url != "" and smtp_host is defined and "email" in canales_comunicacion
+      ignore_errors: true
 
     - name: 4.2 ENVIAR NOTIFICACIÓN POR SLACK (community.general.slack)
       community.general.slack:
@@ -407,6 +408,8 @@
         username: "AWX Automation"
         icon_emoji: ":rocket:"
       when: repo_final_url is defined and repo_final_url != "" and slack_api_token is defined and "slack" in canales_comunicacion
+      ignore_errors: true
+
 
     - name: Enviar mensaje a Microsoft Teams
       ansible.builtin.uri:
@@ -420,3 +423,4 @@
         validate_certs: "{{validate_certs}}"
       delegate_to: localhost
       when: repo_final_url is defined and repo_final_url != "" and teams_webhook_url is defined and "teams" in canales_comunicacion
+      ignore_errors: true
