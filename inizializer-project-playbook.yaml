@@ -44,7 +44,7 @@
 
     is_awx: "{{ awx_job_id is defined }}"
     path_token: "{{ '/api/v2/tokens/' if is_awx else '/api/gateway/v1/tokens/' }}"
-    path_job_teamplte: "{{ '/api/v2/job_templates/' if is_awx else '/api/controller/v2/job_templates/' }}"
+    path_job_template: "{{ 'api/v2/workflow_job_templates/' if is_awx else '/api/controller/v2/workflow_job_templates/' }}"
 
     aap_username: "{{ lookup('env', 'CONTROLLER_USERNAME')}}"
     aap_password: "{{ lookup('env', 'CONTROLLER_PASSWORD')}}"
@@ -144,7 +144,7 @@
 
     - name: ✅ Wait for the URL to be available (HTTP 200)
       ansible.builtin.uri:
-        url: "https://{{aap_hostname}}{{path_job_teamplte}}?search={{job_Template_lifecycle| urlencode}}"
+        url: "https://{{aap_hostname}}{{path_job_template}}?search={{job_Template_lifecycle| urlencode}}"
         method: GET
         user: "{{ aap_username }}"
         password: "{{ aap_password }}"
