@@ -387,7 +387,7 @@
           Hola,
 
           Se ha completado la automatización.
-          - URL de Acceso: {{ repo_final_url }}
+          - URL de Acceso: https://{{ repo_final_url }}
           - Webhook (https://{{ aap_hostname }}{{ aap_job_template_content_results[0].related.webhook_receiver }}) configurado.
           - PAT de usuario creado para este proceso.
 
@@ -404,7 +404,7 @@
       community.general.slack:
         token: "{{ slack_api_token }}"
         channel: "{{ slack_channel }}"
-        msg: "🚀 *Nuevo Repositorio Creado en {{ tipo_repositorio | upper }}*\n- *Nombre:* `{{ repo_nuevo }}`\n- *URL:* <{{ repo_final_url }}|Abrir Repositorio>\n- *PAT Creado:* Nuevo PAT de usuario generado para la automatización.\n*(Recuperar el valor del PAT de los logs de AWX/AAP)*"
+        msg: "🚀 *Nuevo Repositorio Creado en {{ tipo_repositorio | upper }}*\n- *Nombre:* `https://{{ repo_nuevo }}`\n- *URL:* <{{ repo_final_url }}|Abrir Repositorio>\n- *PAT Creado:* Nuevo PAT de usuario generado para la automatización.\n*(Recuperar el valor del PAT de los logs de AWX/AAP)*"
         username: "AWX Automation"
         icon_emoji: ":rocket:"
       when: repo_final_url is defined and repo_final_url != "" and slack_api_token is defined and "slack" in canales_comunicacion
